@@ -213,3 +213,120 @@ function sumall2<T>(arg: T): T {
 }
 sumall2("asdf");
 //===================================================================================
+//class , классы
+//Интерфейс для описания класса, т.е. в классе обязаны быть указанные в интерфейсе свойства и типы
+interface AutoSpecs {
+  _color: string;
+  _engine: string;
+  changeColor: (newColor: string) => void;
+}
+//Ключевое слово implements добавляет классу свойства интерфейса
+class Auto implements AutoSpecs {
+  //свойства лучше указывать как private и пользоваться только геттерами и сеттерами
+  _color: string;
+  _engine: string;
+  //если "strictPropertyInitialization": false, то не используемые свойства будут подсвечены как ошибка
+  //для устранения указываем color!: "string"
+  constructor(color: string, engine: string) {
+    this._color = color;
+    this._engine = engine;
+  }
+
+  changeColor(newColor: string) {
+    this._color = newColor;
+  }
+
+  // public changeColor(newColor: string) {
+  //   this._color = newColor;
+  // }
+  //public то же самое, что и не писать его, т.е можно будет рспользовать метод или свойство за пределами текущего класса
+
+  // private changeColor(newColor: string) {
+  //   this._color = newColor;
+  // }
+  // private свойство или метод доступен только в области видимости только текущего класса
+
+  // protected changeColor(newColor: string) {
+  //   this._color = newColor;
+  // }
+  // protected свойство или метод доступен только в области видимости текущего класса и его детей (объектов класса)
+
+  //В самом JS нет таких ключевых слов как private и public, фича чисто TS, поэтому после компиляции private будет #, а public пустотой
+
+  get color() {
+    return this._color;
+  }
+  get engine() {
+    return this._engine;
+  }
+  set color(newColor) {
+    this._color = newColor;
+  }
+  set engine(newEngine) {
+    this._engine = newEngine;
+  }
+}
+
+const haval = new Auto("silver", "v8");
+
+class EcoAuto extends Auto {
+  _isEco: boolean;
+  constructor(color: string, engine: string) {
+    super(color, engine); //использование свойств от родительского Класса
+    //без super нельзя будет импользловать constructor в объектк класса
+  }
+  //override - ключевое слово чтобы переопределить метод и в родителе в тч
+  override changeColor(newColor: string) {
+    this._color = newColor;
+  }
+}
+
+const tesla = new EcoAuto("black", "electrycity");
+
+//Можно так же использовать дженерики для классов
+class GenClass<T> {
+  someVar: T;
+}
+const testGenClass = new GenClass<number>();
+
+//Абстрактные классы - это описывающие базовый необходимый функционал класс,
+//Вся реалтзация будет в объекте этого класса и если указать ключевое слово abstract методу или свойству, то объект класса обязан будет у себя его прописать
+//ТК абстрактных классов нет в JS, то их и не будет в скомпелированном js файле
+abstract class Base {
+  p(str: string) {
+    console.log(str);
+  }
+  abstract err(str: string): void;
+}
+
+class BaseExtendet extends Base {
+  err(str: string): void {
+    str ? console.log(str) : null;
+  }
+}
+
+new BaseExtendet().p("test abstract class");
+//===================================================================================
+//расширенные возможности
+
+//нередать тип другого литерала с помощью ключевого слова typeof
+let a: number;
+let b: typeof a;
+
+//ключевое свово key of, позволяет получить название ключей в виде типов из type
+type someKeys = {
+  lat: string;
+  lon: string;
+};
+type K = keyof someKeys;
+let someKey: K;
+//ничего более кроме названий ключей someKeys передать someKey будет нельзя
+someKey = "lat";
+someKey = "lon";
+
+//тип null
+//Тип null такой же тип как и все и при обработке можно будет учитывать и это в ТЧ
+let aa: null;
+//bigint, symbol
+//переменной с типом bigInt естественно можно передавать только bigInt числа
+//Переменные с типом Symbol можно пользоваться как уникальной единицей
